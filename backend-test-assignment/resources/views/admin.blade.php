@@ -9,8 +9,8 @@
 
 </head>
 <body>
-<div id="app">
-   <example-component></example-component>
+<div id="app" class=' container mt-3'>
+   <upload-resourse></upload-resourse>
 </div>
     
 </body>
