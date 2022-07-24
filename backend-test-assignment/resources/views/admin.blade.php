@@ -9,8 +9,10 @@
 
 </head>
 <body>
-<div id="app" class=' container mt-3'>
-   <upload-resourse></upload-resourse>
+<div id="app" class='container mt-3'>
+   <file-resourse></file-resourse>
+   <snippet-resourse></snippet-resourse>
+
 </div>
     
 </body>
