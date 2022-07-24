@@ -21,6 +21,7 @@ window.Vue = require('vue').default;
 
 Vue.component('file-resourse', require('./components/FileResourseComponent.vue').default);
 Vue.component('snippet-resourse', require('./components/SnippetResourseComponent.vue').default);
+Vue.component('link-resourse', require('./components/LinkResourseComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
