@@ -5,7 +5,7 @@
             <div class="card-body">
                Title: {{$title}} .
                <p>{{$description}}</p>
-               <textarea disabled="true" id='mysnippet' style="border: none;background-color:white;">{{$snippethtml}}</textarea><br>
+               <textarea disabled="true" id='mysnippet' style="border: none;background-color:white;">{!! $snippethtml !!}</textarea><br>
                <button onclick='copyXmpValue()' class='btn btn-outline-success'>Copy this Snippet</button>
             </div>
         </div>

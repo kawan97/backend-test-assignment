@@ -12,10 +12,15 @@
 
 </head>
 <body class='container mt-3'>
-     
-    <x-ShowFileComponent title="all about js" id="1"  url="https://eodopen.eu/assets/news/news-7.jpg" /> 
-    <x-ShowLinkComponent title="web site for learn js" id="2"  url="https://www.w3schools.com/" newtabcheck='true' /> 
-    <x-ShowSnippetComponent title="snippet for copy HTML snippet to clipboard by js" id="3" snippethtml='<h1>hi</h1>'  description="some dumy text" /> 
+    @foreach ($resorces as $resorce)
+    @if ($resorce->type === 'link')
+    <x-ShowLinkComponent title="{{$resorce->link->title}}" id="{{$resorce->id}}"  url="{{$resorce->link->link}}" newtabcheck='{{$resorce->link->newtabcheck}}' /> 
+    @elseif ($resorce->type === 'file')
+    <x-ShowFileComponent title="{{$resorce->file->title}}" id="{{$resorce->id}}"  url="{{$resorce->file->path}}" /> 
+    @else
+    <x-ShowSnippetComponent title="{{$resorce->snippet->title}}" id="{{$resorce->id}}" snippethtml='{{$resorce->snippet->snippet}}'  description="{{$resorce->snippet->description}}" /> 
+    @endif
+    @endforeach
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>

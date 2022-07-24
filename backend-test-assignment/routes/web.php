@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ResourceController;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,12 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/home', function () {
-    return view('home');
-});
-Route::get('/', function () {
-    return view('home');
-});
-Route::get('/admin', function () {
-    return view('admin');
-});
+Route::get('/', [ResourceController::class, 'index']);
+
+Route::get('/admin', [AdminController::class, 'create']);
+

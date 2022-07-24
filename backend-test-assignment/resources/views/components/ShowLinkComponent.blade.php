@@ -4,7 +4,7 @@
             <div class="card-header bg-warning">Resourse id={{$id}} and Type=Link</div>
             <div class="card-body">
                Title: {{$title}} ,
-               Link : <a href="{{$url}}"  {{$newtabcheck=='true' ? 'target=_blank' : '' }}> Click Me</a>
+               Link : <a href="{{$url}}"  {{$newtabcheck=='1' ? 'target=_blank' : '' }}> Click Me</a>
             </div>
         </div>
      </div>
