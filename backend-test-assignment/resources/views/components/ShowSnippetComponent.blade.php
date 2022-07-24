@@ -17,7 +17,5 @@ function copyXmpValue(){
     // console.log(snippet.value)
     navigator.clipboard.writeText(snippet.value);
     toastr.success('Copy to clipboard');
-
-
 }
 </script>
