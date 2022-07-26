@@ -5333,6 +5333,42 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   mounted: function mounted() {// console.log('Component mounted.')
+  },
+  methods: {
+    onSubmit: function onSubmit() {
+      var linkTitle = document.getElementById("linkTitle");
+      var linkUrl = document.getElementById("linkUrl");
+      var linkNewTabCheck = document.getElementById("linkNewTabCheck");
+
+      if (linkTitle.value == '' || linkUrl.value == '') {
+        toastr.error('Link title and URL are required');
+      } else {
+        var check = 0;
+
+        if (linkNewTabCheck.checked) {
+          var check = 1;
+        }
+
+        var formData = new FormData();
+        formData.append("title", linkTitle.value);
+        formData.append("link", linkUrl.value);
+        formData.append("newtabcheck", check);
+        formData.append("type", 'link');
+        axios({
+          method: 'post',
+          url: '/api/admin/create',
+          data: formData
+        }).then(function (response) {
+          if (response.data.result) {
+            toastr.success('successfully add one record');
+            linkUrl.value = '';
+            linkTitle.value = '';
+          } else {
+            toastr.error('Sorry you have an error');
+          }
+        });
+      }
+    }
   }
 });
 
@@ -28443,69 +28479,31 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("hr"),
+  return _c("div", [
+    _c("hr"),
+    _vm._v(" "),
+    _c("h2", { staticClass: "text-center" }, [_vm._v("Upload Link Resources")]),
+    _vm._v(" "),
+    _c("div", { staticClass: "container row" }, [
+      _c("div", { staticClass: "col-3" }),
       _vm._v(" "),
-      _c("h2", { staticClass: "text-center" }, [
-        _vm._v("Upload Link Resources"),
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "container row" }, [
-        _c("div", { staticClass: "col-3" }),
-        _vm._v(" "),
-        _c("form", { staticClass: "col-6" }, [
-          _c("div", { staticClass: "mb-3" }, [
-            _c(
-              "label",
-              { staticClass: "form-label", attrs: { for: "linkTitle" } },
-              [_vm._v("Link Title")]
-            ),
-            _vm._v(" "),
-            _c("input", {
-              staticClass: "form-control",
-              attrs: { type: "text", id: "linkTitle", name: "linkTitle" },
-            }),
-          ]),
+      _c(
+        "form",
+        {
+          staticClass: "col-6",
+          on: {
+            submit: function ($event) {
+              $event.preventDefault()
+              return _vm.onSubmit.apply(null, arguments)
+            },
+          },
+        },
+        [
+          _vm._m(0),
           _vm._v(" "),
-          _c("div", { staticClass: "mb-3" }, [
-            _c(
-              "label",
-              { staticClass: "form-label", attrs: { for: "linkUrl" } },
-              [_vm._v("Enter URL")]
-            ),
-            _vm._v(" "),
-            _c("input", {
-              staticClass: "form-control",
-              attrs: { type: "url", id: "linkUrl", name: "linkUrl" },
-            }),
-          ]),
+          _vm._m(1),
           _vm._v(" "),
-          _c("div", { staticClass: "mb-3 form-check" }, [
-            _c("input", {
-              staticClass: "form-check-input",
-              attrs: {
-                type: "checkbox",
-                name: "linkNewTabCheck",
-                id: "linkNewTabCheck",
-              },
-            }),
-            _vm._v(" "),
-            _c(
-              "label",
-              {
-                staticClass: "form-check-label",
-                attrs: { for: "linkNewTabCheck" },
-              },
-              [_vm._v("Open in a new tab")]
-            ),
-          ]),
+          _vm._m(2),
           _vm._v(" "),
           _c(
             "button",
@@ -28515,8 +28513,62 @@ var staticRenderFns = [
             },
             [_vm._v("Upload Link")]
           ),
-        ]),
+        ]
+      ),
+    ]),
+  ])
+}
+var staticRenderFns = [
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "mb-3" }, [
+      _c("label", { staticClass: "form-label", attrs: { for: "linkTitle" } }, [
+        _vm._v("Link Title"),
       ]),
+      _vm._v(" "),
+      _c("input", {
+        staticClass: "form-control",
+        attrs: { type: "text", id: "linkTitle", name: "linkTitle" },
+      }),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "mb-3" }, [
+      _c("label", { staticClass: "form-label", attrs: { for: "linkUrl" } }, [
+        _vm._v("Enter URL"),
+      ]),
+      _vm._v(" "),
+      _c("input", {
+        staticClass: "form-control",
+        attrs: { type: "url", id: "linkUrl", name: "linkUrl" },
+      }),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "mb-3 form-check" }, [
+      _c("input", {
+        staticClass: "form-check-input",
+        attrs: {
+          type: "checkbox",
+          value: "1",
+          name: "linkNewTabCheck",
+          id: "linkNewTabCheck",
+        },
+      }),
+      _vm._v(" "),
+      _c(
+        "label",
+        { staticClass: "form-check-label", attrs: { for: "linkNewTabCheck" } },
+        [_vm._v("Open in a new tab")]
+      ),
     ])
   },
 ]

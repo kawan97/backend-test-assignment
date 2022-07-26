@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Link;
+use App\Models\Resource;
+use Symfony\Component\HttpFoundation\Response;
 
 class AdminController extends Controller
 {
@@ -34,7 +37,24 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request,[
+            'newtabcheck' => 'required',
+            'link' => 'required',
+            'title' => 'required',
+        ]);
+
+        $newResource = new Resource();
+        $newResource->type = $request->type;
+        $newResource->save();
+
+        $newLink = new Link();
+        $newLink->newtabcheck = $request->newtabcheck;
+        $newLink->title = $request->title;
+        $newLink->link = $request->link;
+        $newLink->resource_id = $newResource->id;
+        $newLink->save();
+        return response()->json(['result'=>true,'link' => $newLink], Response::HTTP_CREATED);
+
     }
 
     /**
