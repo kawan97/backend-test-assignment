@@ -15,7 +15,7 @@ class ResourceController extends Controller
      */
     public function index()
     {
-        $resorces=Resource::orderBy('id', 'DESC')->with('link')->with('file')->with('snippet')->paginate(3);
+        $resorces=Resource::orderBy('id', 'DESC')->with('link')->with('file')->with('snippet')->paginate(5);
         //  return $resorces;
         return view('home',['resorces' => $resorces]);
     }

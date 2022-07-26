@@ -13,12 +13,8 @@
 </head>
 <body>
 <div id="app" class='container mt-3'>
-    <center>For edit resources <a href='admin/edit'>click here</a></center>
-
-   <file-resourse></file-resourse>
-   <snippet-resourse></snippet-resourse>
-   <link-resourse></link-resourse>
-
+   <edit-resourse></edit-resourse>
+   
 </div>
 </body>
 <script src="{{ mix('/js/app.js') }}"></script>

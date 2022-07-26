@@ -18,4 +18,5 @@ use App\Http\Controllers\AdminController;
 Route::get('/', [ResourceController::class, 'index']);
 
 Route::get('/admin', [AdminController::class, 'create']);
+Route::get('/admin/edit', [AdminController::class, 'edit']);
 

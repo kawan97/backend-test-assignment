@@ -18,7 +18,8 @@ class AdminController extends Controller
      */
     public function index()
     {
-        //
+        $resorces=Resource::orderBy('id', 'DESC')->with('link')->with('file')->with('snippet')->paginate(5);
+        return response()->json(['message'=>'successfully return all resources','resource' => $resorces], Response::HTTP_CREATED);
     }
 
     /**
@@ -124,15 +125,11 @@ class AdminController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+
+    public function edit()
     {
-        //
+        return view('editadmin');
+ 
     }
 
     /**
@@ -155,6 +152,13 @@ class AdminController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $resource=Resource::where('id',$id)->delete();
+        if($resource){
+            return response()->json(['result'=>true,'message' => 'successfully delete  resource '.$id]);
+        }else{
+            return response()->json(['result'=>true,'message' => 'you have an error']);
+ 
+        }
+
     }
 }
