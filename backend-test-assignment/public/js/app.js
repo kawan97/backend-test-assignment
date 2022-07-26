@@ -5290,6 +5290,36 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   mounted: function mounted() {// console.log('Component mounted.')
+  },
+  methods: {
+    onSubmit: function onSubmit() {
+      var resourcesFile = document.getElementById("resourcesFile");
+      var resourcesTitle = document.getElementById("resourcesTitle");
+
+      if (resourcesFile.value == '' || resourcesFile.value == '') {
+        toastr.error('title and file are required');
+      } else {
+        var formData = new FormData();
+        formData.append("title", resourcesTitle.value);
+        formData.append("path", resourcesFile.files[0]);
+        formData.append("type", 'file');
+        axios({
+          method: 'post',
+          url: '/api/admin/create',
+          data: formData
+        }).then(function (response) {
+          if (response.data.typeerror) {
+            toastr.error(response.data.message);
+          } else if (response.data.result) {
+            toastr.success('successfully add one record');
+            linkUrl.resourcesTitle = '';
+            linkTitle.resourcesFile = '';
+          } else {
+            toastr.error('Sorry you have an error');
+          }
+        });
+      }
+    }
   }
 });
 
@@ -28389,60 +28419,27 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("h2", { staticClass: "text-center" }, [
-        _vm._v("Upload PDF Resources "),
-      ]),
+  return _c("div", [
+    _c("h2", { staticClass: "text-center" }, [_vm._v("Upload PDF Resources ")]),
+    _vm._v(" "),
+    _c("div", { staticClass: "container row" }, [
+      _c("div", { staticClass: "col-3" }),
       _vm._v(" "),
-      _c("div", { staticClass: "container row" }, [
-        _c("div", { staticClass: "col-3" }),
-        _vm._v(" "),
-        _c("form", { staticClass: "col-6" }, [
-          _c("div", { staticClass: "mb-3" }, [
-            _c(
-              "label",
-              { staticClass: "form-label", attrs: { for: "resourcesTitle" } },
-              [_vm._v("Resources Title")]
-            ),
-            _vm._v(" "),
-            _c("input", {
-              staticClass: "form-control",
-              attrs: {
-                type: "text",
-                name: "resourcesTitle",
-                id: "resourcesTitle",
-              },
-            }),
-          ]),
+      _c(
+        "form",
+        {
+          staticClass: "col-6",
+          on: {
+            submit: function ($event) {
+              $event.preventDefault()
+              return _vm.onSubmit.apply(null, arguments)
+            },
+          },
+        },
+        [
+          _vm._m(0),
           _vm._v(" "),
-          _c("div", { staticClass: "mb-3" }, [
-            _c(
-              "label",
-              { staticClass: "form-label", attrs: { for: "resourcesFile" } },
-              [_vm._v("Upload PDF File")]
-            ),
-            _vm._v(" "),
-            _c("input", {
-              staticClass: "form-control",
-              attrs: {
-                type: "file",
-                id: "resourcesFile",
-                name: "resourcesFile",
-                accept: "application/pdf",
-              },
-            }),
-            _vm._v(" "),
-            _c("div", { staticClass: "form-text" }, [
-              _vm._v("Please Upload PDF File."),
-            ]),
-          ]),
+          _vm._m(1),
           _vm._v(" "),
           _c(
             "button",
@@ -28452,7 +28449,52 @@ var staticRenderFns = [
             },
             [_vm._v("Upload PDF")]
           ),
-        ]),
+        ]
+      ),
+    ]),
+  ])
+}
+var staticRenderFns = [
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "mb-3" }, [
+      _c(
+        "label",
+        { staticClass: "form-label", attrs: { for: "resourcesTitle" } },
+        [_vm._v("Resources Title")]
+      ),
+      _vm._v(" "),
+      _c("input", {
+        staticClass: "form-control",
+        attrs: { type: "text", name: "resourcesTitle", id: "resourcesTitle" },
+      }),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "mb-3" }, [
+      _c(
+        "label",
+        { staticClass: "form-label", attrs: { for: "resourcesFile" } },
+        [_vm._v("Upload PDF File")]
+      ),
+      _vm._v(" "),
+      _c("input", {
+        staticClass: "form-control",
+        attrs: {
+          type: "file",
+          id: "resourcesFile",
+          name: "resourcesFile",
+          accept: "application/pdf",
+        },
+      }),
+      _vm._v(" "),
+      _c("div", { staticClass: "form-text" }, [
+        _vm._v("Please Upload PDF File."),
       ]),
     ])
   },

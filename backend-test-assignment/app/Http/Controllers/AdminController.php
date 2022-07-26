@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Link;
+use App\Models\File;
+use App\Models\Snippet;
 use App\Models\Resource;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -38,22 +40,54 @@ class AdminController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,[
-            'newtabcheck' => 'required',
-            'link' => 'required',
-            'title' => 'required',
+            'type' => 'required',
         ]);
 
-        $newResource = new Resource();
-        $newResource->type = $request->type;
-        $newResource->save();
+        //insert link resource
+        if($request->type == 'link'){
+            $this->validate($request,[
+                'newtabcheck' => 'required',
+                'link' => 'required',
+                'title' => 'required',
+            ]);
+            $newResource = new Resource();
+            $newResource->type = $request->type;
+            $newResource->save();
 
-        $newLink = new Link();
-        $newLink->newtabcheck = $request->newtabcheck;
-        $newLink->title = $request->title;
-        $newLink->link = $request->link;
-        $newLink->resource_id = $newResource->id;
-        $newLink->save();
-        return response()->json(['result'=>true,'link' => $newLink], Response::HTTP_CREATED);
+            $newLink = new Link();
+            $newLink->newtabcheck = $request->newtabcheck;
+            $newLink->title = $request->title;
+            $newLink->link = $request->link;
+            $newLink->resource_id = $newResource->id;
+            $newLink->save();
+            return response()->json(['result'=>true,'link' => $newLink], Response::HTTP_CREATED);
+        }
+
+        //insert file resource
+        if($request->type == 'file'){
+            $this->validate($request,[
+                'path' => 'required',
+                'title' => 'required',
+            ]);
+            $newResource = new Resource();
+            $newResource->type = $request->type;
+            $newResource->save();
+    
+            if($request->path->getClientOriginalExtension() == 'pdf'){
+                $fileName = time().'_'.$newResource->id.'_'.$request->path->getClientOriginalName();
+                $filePath = $request->file('path')->storeAs('uploads', $fileName, 'public');
+                $newFile = new File();
+                $newFile->title = $request->title;
+                $newFile->path = $filePath;
+                $newFile->resource_id = $newResource->id;
+                $newFile->save();
+                return response()->json(['result'=>true,'file' => $newFile], Response::HTTP_CREATED);
+            }else{
+                return response()->json(['typeerror'=>true,'message' => 'Please just upload pdf file'], Response::HTTP_CREATED);
+
+            }
+
+        }
 
     }
 
