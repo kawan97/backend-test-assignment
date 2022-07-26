@@ -83,11 +83,33 @@ class AdminController extends Controller
                 $newFile->save();
                 return response()->json(['result'=>true,'file' => $newFile], Response::HTTP_CREATED);
             }else{
-                return response()->json(['typeerror'=>true,'message' => 'Please just upload pdf file'], Response::HTTP_CREATED);
+                return response()->json(['typeerror'=>true,'message' => 'Please just upload pdf file']);
 
             }
 
         }
+
+        //insert snippet resource
+        if($request->type == 'snippet'){
+            $this->validate($request,[
+                'title' => 'required',
+                'description' => 'required',
+                'snippet' => 'required',
+            ]);
+
+            $newResource = new Resource();
+            $newResource->type = $request->type;
+            $newResource->save();
+
+            $newSnippet = new Snippet();
+            $newSnippet->snippet = $request->snippet;
+            $newSnippet->title = $request->title;
+            $newSnippet->description = $request->description;
+            $newSnippet->resource_id = $newResource->id;
+            $newSnippet->save();
+            return response()->json(['result'=>true,'snippet' => $newSnippet], Response::HTTP_CREATED);
+        }
+
 
     }
 

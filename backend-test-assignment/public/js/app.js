@@ -5311,9 +5311,10 @@ __webpack_require__.r(__webpack_exports__);
           if (response.data.typeerror) {
             toastr.error(response.data.message);
           } else if (response.data.result) {
+            console.log(response.data);
             toastr.success('successfully add one record');
-            linkUrl.resourcesTitle = '';
-            linkTitle.resourcesFile = '';
+            resourcesTitle.value = '';
+            resourcesFile.value = '';
           } else {
             toastr.error('Sorry you have an error');
           }
@@ -5455,6 +5456,36 @@ tinymce.init({
   methods: {
     btn: function btn() {
       console.log(tinymce.activeEditor.getContent());
+    },
+    onSubmit: function onSubmit() {
+      var snippetDescription = document.getElementById("snippetDescription");
+      var snippettitle = document.getElementById("snippettitle");
+      var snippetContent = tinymce.activeEditor.getContent();
+      var content = document.getElementById("snippetHtml");
+
+      if (snippetDescription.value == '' || snippettitle.value == '' || snippetContent == '') {
+        toastr.error('All fields are required');
+      } else {
+        var formData = new FormData();
+        formData.append("title", snippettitle.value);
+        formData.append("snippet", snippetContent);
+        formData.append("description", snippetDescription.value);
+        formData.append("type", 'snippet');
+        axios({
+          method: 'post',
+          url: '/api/admin/create',
+          data: formData
+        }).then(function (response) {
+          if (response.data.result) {
+            toastr.success('successfully add one record');
+            snippettitle.value = '';
+            snippetDescription.value = '';
+            content.value = '';
+          } else {
+            toastr.error('Sorry you have an error');
+          }
+        });
+      }
     }
   }
 });
@@ -28636,69 +28667,31 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("hr"),
+  return _c("div", [
+    _c("hr"),
+    _vm._v(" "),
+    _c("h2", { staticClass: "text-center" }, [_vm._v("Upload HTML Resources")]),
+    _vm._v(" "),
+    _c("div", { staticClass: "container row" }, [
+      _c("div", { staticClass: "col-3" }),
       _vm._v(" "),
-      _c("h2", { staticClass: "text-center" }, [
-        _vm._v("Upload HTML Resources"),
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "container row" }, [
-        _c("div", { staticClass: "col-3" }),
-        _vm._v(" "),
-        _c("form", { staticClass: "col-6" }, [
-          _c("div", { staticClass: "mb-3" }, [
-            _c(
-              "label",
-              { staticClass: "form-label", attrs: { for: "snippetTitle" } },
-              [_vm._v("Snippet Title")]
-            ),
-            _vm._v(" "),
-            _c("input", {
-              staticClass: "form-control",
-              attrs: { type: "text", id: "snippettitle", name: "snippettitle" },
-            }),
-          ]),
+      _c(
+        "form",
+        {
+          staticClass: "col-6",
+          on: {
+            submit: function ($event) {
+              $event.preventDefault()
+              return _vm.onSubmit.apply(null, arguments)
+            },
+          },
+        },
+        [
+          _vm._m(0),
           _vm._v(" "),
-          _c("div", { staticClass: "mb-3" }, [
-            _c(
-              "label",
-              {
-                staticClass: "form-label",
-                attrs: { for: "snippetDescription" },
-              },
-              [_vm._v("Snippet Description")]
-            ),
-            _vm._v(" "),
-            _c("textarea", {
-              staticClass: "form-control",
-              attrs: {
-                id: "snippetDescription",
-                rows: "3",
-                name: "snippetDescription",
-              },
-            }),
-          ]),
+          _vm._m(1),
           _vm._v(" "),
-          _c("div", { staticClass: "mb-3" }, [
-            _c(
-              "label",
-              { staticClass: "form-label", attrs: { for: "snippetHtml" } },
-              [_vm._v("HTML Snippet")]
-            ),
-            _vm._v(" "),
-            _c("textarea", {
-              staticClass: "mceEditor",
-              attrs: { id: "snippetHtml", rows: "3", name: "snippetHtml" },
-            }),
-          ]),
+          _vm._m(2),
           _vm._v(" "),
           _c(
             "button",
@@ -28708,8 +28701,65 @@ var staticRenderFns = [
             },
             [_vm._v("Upload Snippet")]
           ),
-        ]),
-      ]),
+        ]
+      ),
+    ]),
+  ])
+}
+var staticRenderFns = [
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "mb-3" }, [
+      _c(
+        "label",
+        { staticClass: "form-label", attrs: { for: "snippetTitle" } },
+        [_vm._v("Snippet Title")]
+      ),
+      _vm._v(" "),
+      _c("input", {
+        staticClass: "form-control",
+        attrs: { type: "text", id: "snippettitle", name: "snippettitle" },
+      }),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "mb-3" }, [
+      _c(
+        "label",
+        { staticClass: "form-label", attrs: { for: "snippetDescription" } },
+        [_vm._v("Snippet Description")]
+      ),
+      _vm._v(" "),
+      _c("textarea", {
+        staticClass: "form-control",
+        attrs: {
+          id: "snippetDescription",
+          rows: "3",
+          name: "snippetDescription",
+        },
+      }),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "mb-3" }, [
+      _c(
+        "label",
+        { staticClass: "form-label", attrs: { for: "snippetHtml" } },
+        [_vm._v("HTML Snippet")]
+      ),
+      _vm._v(" "),
+      _c("textarea", {
+        staticClass: "mceEditor",
+        attrs: { id: "snippetHtml", rows: "3", name: "snippetHtml" },
+      }),
     ])
   },
 ]

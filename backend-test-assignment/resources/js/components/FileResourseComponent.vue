@@ -47,9 +47,10 @@
                              toastr.error(response.data.message)
   
                             }else if(response.data.result){
+                                console.log(response.data)
                                 toastr.success('successfully add one record')
-                                linkUrl.resourcesTitle=''
-                                linkTitle.resourcesFile=''
+                                resourcesTitle.value=''
+                                resourcesFile.value=''
                             }else{
                                 toastr.error('Sorry you have an error')
                             }
