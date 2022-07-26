@@ -8,6 +8,7 @@ use App\Models\File;
 use App\Models\Snippet;
 use App\Models\Resource;
 use Symfony\Component\HttpFoundation\Response;
+use Storage;
 
 class AdminController extends Controller
 {
@@ -152,7 +153,15 @@ class AdminController extends Controller
      */
     public function destroy($id)
     {
-        $resource=Resource::where('id',$id)->delete();
+        $resource=Resource::where('id',$id)->with('file');
+        if($resource['type'] == 'file'){
+            if(true){
+                Storage::delete('storage/'.$resource->file->path);
+            }
+        }else{
+            return response()->json(['message' => 'sorry ']);
+
+        }
         if($resource){
             return response()->json(['result'=>true,'message' => 'successfully delete  resource '.$id]);
         }else{

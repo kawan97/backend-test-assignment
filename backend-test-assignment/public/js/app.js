@@ -5321,13 +5321,12 @@ __webpack_require__.r(__webpack_exports__);
         method: 'delete',
         url: '/api/admin/resources/' + id
       }).then(function (res) {
-        // console.log(res.data.resource)
-        if (res.data.result) {
-          toastr.success('successfully Delete one record');
-        } else {
-          toastr.error('Sorry you have an error');
-          this.loading = false;
-        }
+        console.log(res.data); // if(res.data.result){
+        //     toastr.success('successfully Delete one record')
+        // }else{
+        //     toastr.error('Sorry you have an error')
+        //     this.loading=false
+        // }
       });
       this.getResource();
     },
