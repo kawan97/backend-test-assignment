@@ -24,6 +24,16 @@
     @if(count($resorces) ==0)
     <h4>we don't have any resource</h4>
     @endif
+    @if ($resorces->lastPage() > 1)
+    <center class=''>
+    <p>we have {{$resorces->lastPage()}} page s </p>
+    <ul class="pagination" style='justify-content: center;'>
+        <li class="page-item {{$resorces->currentPage() == 1 ? 'disabled' : '' }}"><a  class="page-link " href="{{$resorces->url($resorces->currentPage()-1)}}">Previous</a></li>
+        <li class="page-item active"><a class="page-link active" href="#">{{($resorces->currentPage())}}</a></li>
+        <li class="page-item {{$resorces->lastPage() <= $resorces->currentPage() ? 'disabled' : '' }}"><a  class="page-link" href="{{$resorces->url($resorces->currentPage()+1)}}">Next</a></li>
+    </ul>
+    </center>
+    @endif
 
 
 </body>
