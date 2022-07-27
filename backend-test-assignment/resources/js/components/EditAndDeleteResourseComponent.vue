@@ -278,7 +278,9 @@
                 </div>
             </div>
         </div>
-        <!--  end for snippet -->
+        <!--  end for snippet -->        
+        <!--  end Model -->
+
     </div>
 </template>
 
