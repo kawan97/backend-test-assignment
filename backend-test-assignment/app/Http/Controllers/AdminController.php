@@ -153,16 +153,14 @@ class AdminController extends Controller
      */
     public function destroy($id)
     {
-        $resource=Resource::where('id',$id)->with('file');
-        if($resource['type'] == 'file'){
-            if(true){
-                Storage::delete('storage/'.$resource->file->path);
+        $resource=Resource::where('id',$id)->with('file')->get();
+        if($resource[0]->type == 'file'){
+            if(file_exists(public_path('storage').'/'.$resource[0]->file->path)){
+                unlink(public_path('storage').'/'.$resource[0]->file->path);
             }
-        }else{
-            return response()->json(['message' => 'sorry ']);
-
         }
-        if($resource){
+        $resource[0]->delete();
+        if($resource[0]){
             return response()->json(['result'=>true,'message' => 'successfully delete  resource '.$id]);
         }else{
             return response()->json(['result'=>true,'message' => 'you have an error']);

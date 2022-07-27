@@ -56,17 +56,17 @@
                 }).then(function (res){
 
                     console.log(res.data)
-                    // if(res.data.result){
-                    //     toastr.success('successfully Delete one record')
+                    if(res.data.result){
+                        toastr.success('successfully Delete one record')
 
-                    // }else{
-                    //     toastr.error('Sorry you have an error')
-                    //     this.loading=false
+                    }else{
+                        toastr.error('Sorry you have an error')
+                        this.loading=false
 
-                    // }
+                    }
                 })
 
-                this.getResource()
+                 this.getResource()
 
             },
             editResource(id){
