@@ -5337,6 +5337,219 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -5357,15 +5570,15 @@ __webpack_require__.r(__webpack_exports__);
       var self = this;
       this.loading = true;
       axios({
-        method: 'delete',
-        url: '/api/admin/resources/' + id
+        method: "delete",
+        url: "/api/admin/resources/" + id
       }).then(function (res) {
         console.log(res.data);
 
         if (res.data.result) {
-          toastr.success('successfully Delete one record');
+          toastr.success("successfully Delete one record");
         } else {
-          toastr.error('Sorry you have an error');
+          toastr.error("Sorry you have an error");
           this.loading = false;
         }
       });
@@ -5377,64 +5590,145 @@ __webpack_require__.r(__webpack_exports__);
       });
       this.resource = found;
 
-      if (found.type == 'file') {
+      if (found.type == "file") {
         var resourcesTitle = document.getElementById("resourcesTitle");
         resourcesTitle.value = found.file.title;
         this.filemodelshow = true;
-      } else if (found.type == 'snippet') {
+      } else if (found.type == "snippet") {
+        document.getElementById("snippetDescription").value = found.snippet.description;
+        document.getElementById("snippettitle").value = found.snippet.title;
+        tinymce.activeEditor.setContent(found.snippet.snippet); // document.getElementById("snippetHtml").value=found.snippet.snippet
+
         this.snippetmodelshow = true;
       } else {
         this.linkmodelshow = true;
+        document.getElementById("linkTitle").value = this.resource.link.title;
+        document.getElementById("linkUrl").value = this.resource.link.link;
+        document.getElementById("linkNewTabCheck").checked = false;
+
+        if (this.resource.link.newtabcheck == 1) {
+          document.getElementById("linkNewTabCheck").checked = true;
+        }
       }
     },
-    editResource: function editResource() {
-      console.log(this.resource.id); // update file
-
-      var resourcesFile = document.getElementById("resourcesFile");
-      var resourcesTitle = document.getElementById("resourcesTitle");
-
-      if (resourcesTitle.value == '') {
-        toastr.error('title is required');
-      } else {
-        var formData = new FormData();
-        formData.append("title", resourcesTitle.value);
-
-        if (resourcesFile.files[0]) {
-          formData.append("path", resourcesFile.files[0]);
+    update: function update(formData) {
+      var self = this;
+      axios({
+        method: "put",
+        url: "/api/admin/resources/" + this.resource.id,
+        data: formData
+      }).then(function (response) {
+        if (response.data.typeerror) {
+          toastr.error(response.data.message);
+        } else if (response.data.result) {
+          // console.log(response.data);
+          toastr.success("successfully update one record");
+          self.getResource();
+          self.closeModel();
+        } else {
+          // console.log(response.data);
+          toastr.error("Sorry you have an error");
         }
+      });
+    },
+    editResource: function editResource() {
+      // update file
+      if (this.resource.type == "file") {
+        var resourcesFile = document.getElementById("resourcesFile");
+        var resourcesTitle = document.getElementById("resourcesTitle");
 
-        formData.append("type", 'file');
-        axios({
-          method: 'put',
-          url: '/api/admin/resources/' + this.resource.id,
-          data: formData
-        }).then(function (response) {
-          if (response.data.typeerror) {
-            toastr.error(response.data.message);
-          } else if (response.data.result) {
-            console.log(response.data);
-            toastr.success('successfully update one record');
-            resourcesTitle.value = '';
-            resourcesFile.value = '';
-            this.closeModel();
+        if (resourcesTitle.value == "") {
+          toastr.error("title is required");
+        } else {
+          var formData = {
+            title: resourcesTitle.value,
+            type: "file"
+          };
+
+          if (resourcesFile.files[0]) {
+            var self = this;
+            var formDataImg = new FormData();
+            formDataImg.append("path", resourcesFile.files[0]);
+            formDataImg.append("type", "file");
+            axios({
+              method: "post",
+              url: "/api/admin/resources/updatepdf/" + this.resource.id,
+              data: formDataImg
+            }).then(function (response) {
+              if (response.data.typeerror) {
+                toastr.error(response.data.message);
+              }
+
+              if (response.data.result) {
+                self.update(formData);
+              }
+            });
           } else {
-            console.log(response.data);
-            toastr.error('Sorry you have an error');
+            this.update(formData);
           }
-        });
+        }
       } // end update file
+      // update link
+
+
+      if (this.resource.type == "link") {
+        var linkTitle = document.getElementById("linkTitle");
+        var linkUrl = document.getElementById("linkUrl");
+        var linkNewTabCheck = document.getElementById("linkNewTabCheck");
+
+        if (linkTitle.value == "" || linkUrl.value == "") {
+          toastr.error("Link title and URL are required");
+        } else {
+          var check = 0;
+
+          if (linkNewTabCheck.checked) {
+            var check = 1;
+          }
+
+          var formData = {
+            title: linkTitle.value,
+            type: "link",
+            newtabcheck: check,
+            link: linkUrl.value
+          };
+          this.update(formData);
+        }
+      } //end update link
+      // update snippet
+
+
+      if (this.resource.type == "snippet") {
+        var snippetDescription = document.getElementById("snippetDescription");
+        var snippettitle = document.getElementById("snippettitle");
+        var snippetContent = tinymce.activeEditor.getContent();
+
+        if (snippetDescription.value == "" || snippettitle.value == "" || snippetContent == "") {
+          toastr.error("All fields are required");
+        } else {
+          var formData = {
+            title: snippettitle.value,
+            type: "snippet",
+            snippet: snippetContent,
+            description: snippetDescription.value
+          };
+          this.update(formData);
+        }
+      } //end update snippet
 
     },
     closeModel: function closeModel() {
+      this.loading = true;
       this.filemodelshow = false;
       this.snippetmodelshow = false;
       this.linkmodelshow = false;
+      this.loading = false;
     },
     getResource: function getResource() {
+      this.loading = true;
       var self = this;
       axios({
-        method: 'get',
-        url: '/api/admin/resources'
+        method: "get",
+        url: "/api/admin/resources"
       }).then(function (res) {
         // console.log(res.data.resource)
         self.loading = false;
@@ -5479,6 +5773,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   mounted: function mounted() {// console.log('Component mounted.')
   },
@@ -5487,27 +5797,27 @@ __webpack_require__.r(__webpack_exports__);
       var resourcesFile = document.getElementById("resourcesFile");
       var resourcesTitle = document.getElementById("resourcesTitle");
 
-      if (resourcesFile.value == '' || resourcesFile.value == '') {
-        toastr.error('title and file are required');
+      if (resourcesFile.value == "" || resourcesFile.value == "") {
+        toastr.error("title and file are required");
       } else {
         var formData = new FormData();
         formData.append("title", resourcesTitle.value);
         formData.append("path", resourcesFile.files[0]);
-        formData.append("type", 'file');
+        formData.append("type", "file");
         axios({
-          method: 'post',
-          url: '/api/admin/create',
+          method: "post",
+          url: "/api/admin/create",
           data: formData
         }).then(function (response) {
           if (response.data.typeerror) {
             toastr.error(response.data.message);
           } else if (response.data.result) {
             console.log(response.data);
-            toastr.success('successfully add one record');
-            resourcesTitle.value = '';
-            resourcesFile.value = '';
+            toastr.success("successfully add one record");
+            resourcesTitle.value = "";
+            resourcesFile.value = "";
           } else {
-            toastr.error('Sorry you have an error');
+            toastr.error("Sorry you have an error");
           }
         });
       }
@@ -5553,6 +5863,26 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   mounted: function mounted() {// console.log('Component mounted.')
   },
@@ -5562,8 +5892,8 @@ __webpack_require__.r(__webpack_exports__);
       var linkUrl = document.getElementById("linkUrl");
       var linkNewTabCheck = document.getElementById("linkNewTabCheck");
 
-      if (linkTitle.value == '' || linkUrl.value == '') {
-        toastr.error('Link title and URL are required');
+      if (linkTitle.value == "" || linkUrl.value == "") {
+        toastr.error("Link title and URL are required");
       } else {
         var check = 0;
 
@@ -5575,18 +5905,18 @@ __webpack_require__.r(__webpack_exports__);
         formData.append("title", linkTitle.value);
         formData.append("link", linkUrl.value);
         formData.append("newtabcheck", check);
-        formData.append("type", 'link');
+        formData.append("type", "link");
         axios({
-          method: 'post',
-          url: '/api/admin/create',
+          method: "post",
+          url: "/api/admin/create",
           data: formData
         }).then(function (response) {
           if (response.data.result) {
-            toastr.success('successfully add one record');
-            linkUrl.value = '';
-            linkTitle.value = '';
+            toastr.success("successfully add one record");
+            linkUrl.value = "";
+            linkTitle.value = "";
           } else {
-            toastr.error('Sorry you have an error');
+            toastr.error("Sorry you have an error");
           }
         });
       }
@@ -5633,13 +5963,36 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 tinymce.init({
-  selector: '#snippetHtml',
-  plugins: 'a11ychecker advcode casechange export formatpainter image editimage linkchecker autolink lists checklist media mediaembed pageembed permanentpen powerpaste table advtable tableofcontents tinycomments tinymcespellchecker',
-  toolbar: 'a11ycheck addcomment showcomments casechange checklist code export formatpainter image editimage pageembed permanentpen table tableofcontents',
-  toolbar_mode: 'floating',
-  tinycomments_mode: 'embedded',
-  tinycomments_author: 'Author name'
+  selector: "#snippetHtml",
+  plugins: "a11ychecker advcode casechange export formatpainter image editimage linkchecker autolink lists checklist media mediaembed pageembed permanentpen powerpaste table advtable tableofcontents tinycomments tinymcespellchecker",
+  toolbar: "a11ycheck addcomment showcomments casechange checklist code export formatpainter image editimage pageembed permanentpen table tableofcontents",
+  toolbar_mode: "floating",
+  tinycomments_mode: "embedded",
+  tinycomments_author: "Author name"
 });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   mounted: function mounted() {// console.log('Component mounted.')
@@ -5654,26 +6007,26 @@ tinymce.init({
       var snippetContent = tinymce.activeEditor.getContent();
       var content = document.getElementById("snippetHtml");
 
-      if (snippetDescription.value == '' || snippettitle.value == '' || snippetContent == '') {
-        toastr.error('All fields are required');
+      if (snippetDescription.value == "" || snippettitle.value == "" || snippetContent == "") {
+        toastr.error("All fields are required");
       } else {
         var formData = new FormData();
         formData.append("title", snippettitle.value);
         formData.append("snippet", snippetContent);
         formData.append("description", snippetDescription.value);
-        formData.append("type", 'snippet');
+        formData.append("type", "snippet");
         axios({
-          method: 'post',
-          url: '/api/admin/create',
+          method: "post",
+          url: "/api/admin/create",
           data: formData
         }).then(function (response) {
           if (response.data.result) {
-            toastr.success('successfully add one record');
-            snippettitle.value = '';
-            snippetDescription.value = '';
-            content.value = '';
+            toastr.success("successfully add one record");
+            snippettitle.value = "";
+            snippetDescription.value = "";
+            content.value = "";
           } else {
-            toastr.error('Sorry you have an error');
+            toastr.error("Sorry you have an error");
           }
         });
       }
@@ -28719,7 +29072,7 @@ var render = function () {
     { staticClass: "row" },
     [
       _c("h2", { staticClass: "text-center" }, [
-        _vm._v("Edit and Delete Resources "),
+        _vm._v("Edit and Delete Resources"),
       ]),
       _vm._v(" "),
       _vm.loading
@@ -28759,7 +29112,13 @@ var render = function () {
                       : _vm._e(),
                     _vm._v(" "),
                     resource.snippet
-                      ? _c("td", [_vm._v(_vm._s(resource.snippet.title))])
+                      ? _c("td", [
+                          _vm._v(
+                            "\n                        " +
+                              _vm._s(resource.snippet.title) +
+                              "\n                    "
+                          ),
+                        ])
                       : _vm._e(),
                     _vm._v(" "),
                     resource.file
@@ -28777,7 +29136,11 @@ var render = function () {
                             },
                           },
                         },
-                        [_vm._v("Edit")]
+                        [
+                          _vm._v(
+                            "\n                            Edit\n                        "
+                          ),
+                        ]
                       ),
                     ]),
                     _vm._v(" "),
@@ -28792,7 +29155,11 @@ var render = function () {
                             },
                           },
                         },
-                        [_vm._v("Delete")]
+                        [
+                          _vm._v(
+                            "\n                            Delete\n                        "
+                          ),
+                        ]
                       ),
                     ]),
                   ])
@@ -28819,7 +29186,11 @@ var render = function () {
                     staticClass: "modal-title",
                     attrs: { id: "exampleModalLabel" },
                   },
-                  [_vm._v("Edit File")]
+                  [
+                    _vm._v(
+                      "\n                        Edit File\n                    "
+                    ),
+                  ]
                 ),
                 _vm._v(" "),
                 _c("button", {
@@ -28853,7 +29224,11 @@ var render = function () {
                     attrs: { type: "button" },
                     on: { click: _vm.closeModel },
                   },
-                  [_vm._v("Close")]
+                  [
+                    _vm._v(
+                      "\n                        Close\n                    "
+                    ),
+                  ]
                 ),
                 _vm._v(" "),
                 _c(
@@ -28863,7 +29238,173 @@ var render = function () {
                     attrs: { type: "button" },
                     on: { click: _vm.editResource },
                   },
-                  [_vm._v("Save changes")]
+                  [
+                    _vm._v(
+                      "\n                        Save changes\n                    "
+                    ),
+                  ]
+                ),
+              ]),
+            ]),
+          ]),
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "modal fade show",
+          style: { display: _vm.linkmodelshow ? "block" : "none" },
+          attrs: { id: "linkModal", tabindex: "-1" },
+        },
+        [
+          _c("div", { staticClass: "modal-dialog" }, [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
+                _c(
+                  "h5",
+                  {
+                    staticClass: "modal-title",
+                    attrs: { id: "exampleModalLabel" },
+                  },
+                  [
+                    _vm._v(
+                      "\n                        Edit Link\n                    "
+                    ),
+                  ]
+                ),
+                _vm._v(" "),
+                _c("button", {
+                  staticClass: "btn-close",
+                  attrs: { type: "button" },
+                  on: { click: _vm.closeModel },
+                }),
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c(
+                  "form",
+                  {
+                    staticClass: "col-12",
+                    on: {
+                      submit: function ($event) {
+                        $event.preventDefault()
+                        return _vm.onSubmit.apply(null, arguments)
+                      },
+                    },
+                  },
+                  [_vm._m(2), _vm._v(" "), _vm._m(3), _vm._v(" "), _vm._m(4)]
+                ),
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-secondary",
+                    attrs: { type: "button" },
+                    on: { click: _vm.closeModel },
+                  },
+                  [
+                    _vm._v(
+                      "\n                        Close\n                    "
+                    ),
+                  ]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-warning",
+                    attrs: { type: "button" },
+                    on: { click: _vm.editResource },
+                  },
+                  [
+                    _vm._v(
+                      "\n                        Save changes\n                    "
+                    ),
+                  ]
+                ),
+              ]),
+            ]),
+          ]),
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "modal fade show",
+          style: { display: _vm.snippetmodelshow ? "block" : "none" },
+          attrs: { id: "linkModal", tabindex: "-1" },
+        },
+        [
+          _c("div", { staticClass: "modal-dialog" }, [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
+                _c(
+                  "h5",
+                  {
+                    staticClass: "modal-title",
+                    attrs: { id: "exampleModalLabel" },
+                  },
+                  [
+                    _vm._v(
+                      "\n                        Edit Snippet\n                    "
+                    ),
+                  ]
+                ),
+                _vm._v(" "),
+                _c("button", {
+                  staticClass: "btn-close",
+                  attrs: { type: "button" },
+                  on: { click: _vm.closeModel },
+                }),
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c(
+                  "form",
+                  {
+                    staticClass: "col-12",
+                    on: {
+                      submit: function ($event) {
+                        $event.preventDefault()
+                        return _vm.onSubmit.apply(null, arguments)
+                      },
+                    },
+                  },
+                  [_vm._m(5), _vm._v(" "), _vm._m(6), _vm._v(" "), _vm._m(7)]
+                ),
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-secondary",
+                    attrs: { type: "button" },
+                    on: { click: _vm.closeModel },
+                  },
+                  [
+                    _vm._v(
+                      "\n                        Close\n                    "
+                    ),
+                  ]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-success",
+                    attrs: { type: "button" },
+                    on: { click: _vm.editResource },
+                  },
+                  [
+                    _vm._v(
+                      "\n                        Save changes\n                    "
+                    ),
+                  ]
                 ),
               ]),
             ]),
@@ -28914,8 +29455,117 @@ var staticRenderFns = [
       }),
       _vm._v(" "),
       _c("div", { staticClass: "form-text" }, [
-        _vm._v("Please Upload PDF File."),
+        _vm._v(
+          "\n                                Please Upload PDF File.\n                            "
+        ),
       ]),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "mb-3" }, [
+      _c("label", { staticClass: "form-label", attrs: { for: "linkTitle" } }, [
+        _vm._v("Link Title"),
+      ]),
+      _vm._v(" "),
+      _c("input", {
+        staticClass: "form-control",
+        attrs: { type: "text", id: "linkTitle", name: "linkTitle" },
+      }),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "mb-3" }, [
+      _c("label", { staticClass: "form-label", attrs: { for: "linkUrl" } }, [
+        _vm._v("Enter URL"),
+      ]),
+      _vm._v(" "),
+      _c("input", {
+        staticClass: "form-control",
+        attrs: { type: "url", id: "linkUrl", name: "linkUrl" },
+      }),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "mb-3 form-check" }, [
+      _c("input", {
+        staticClass: "form-check-input",
+        attrs: {
+          type: "checkbox",
+          value: "1",
+          name: "linkNewTabCheck",
+          id: "linkNewTabCheck",
+        },
+      }),
+      _vm._v(" "),
+      _c(
+        "label",
+        { staticClass: "form-check-label", attrs: { for: "linkNewTabCheck" } },
+        [_vm._v("Open in a new tab")]
+      ),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "mb-3" }, [
+      _c(
+        "label",
+        { staticClass: "form-label", attrs: { for: "snippetTitle" } },
+        [_vm._v("Snippet Title")]
+      ),
+      _vm._v(" "),
+      _c("input", {
+        staticClass: "form-control",
+        attrs: { type: "text", id: "snippettitle", name: "snippettitle" },
+      }),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "mb-3" }, [
+      _c(
+        "label",
+        { staticClass: "form-label", attrs: { for: "snippetDescription" } },
+        [_vm._v("Snippet Description")]
+      ),
+      _vm._v(" "),
+      _c("textarea", {
+        staticClass: "form-control",
+        attrs: {
+          id: "snippetDescription",
+          rows: "3",
+          name: "snippetDescription",
+        },
+      }),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "mb-3" }, [
+      _c(
+        "label",
+        { staticClass: "form-label", attrs: { for: "snippetHtml" } },
+        [_vm._v("HTML Snippet")]
+      ),
+      _vm._v(" "),
+      _c("textarea", {
+        staticClass: "mceEditor",
+        attrs: { id: "snippetHtml", rows: "3", name: "snippetHtml" },
+      }),
     ])
   },
 ]
@@ -28942,7 +29592,7 @@ var render = function () {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c("h2", { staticClass: "text-center" }, [_vm._v("Upload PDF Resources ")]),
+    _c("h2", { staticClass: "text-center" }, [_vm._v("Upload PDF Resources")]),
     _vm._v(" "),
     _c("div", { staticClass: "container row" }, [
       _c("div", { staticClass: "col-3" }),
@@ -28969,7 +29619,7 @@ var render = function () {
               staticClass: "btn btn-primary col-12",
               attrs: { type: "submit" },
             },
-            [_vm._v("Upload PDF")]
+            [_vm._v("\n                Upload PDF\n            ")]
           ),
         ]
       ),
@@ -29075,7 +29725,7 @@ var render = function () {
               staticClass: "btn btn-warning col-12",
               attrs: { type: "submit" },
             },
-            [_vm._v("Upload Link")]
+            [_vm._v("\n                Upload Link\n            ")]
           ),
         ]
       ),
@@ -29190,7 +29840,7 @@ var render = function () {
               staticClass: "btn btn-success col-12",
               attrs: { type: "submit" },
             },
-            [_vm._v("Upload Snippet")]
+            [_vm._v("\n                Upload Snippet\n            ")]
           ),
         ]
       ),

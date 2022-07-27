@@ -140,36 +140,94 @@ class AdminController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    public function updatePDF(Request $request, $id)
+    {
+        $this->validate($request,[
+            'type' => 'required',
+        ]);
+        //update file pdf resource
+        if($request->type == 'file'){
+            $this->validate($request,[
+                'path' => 'required',
+            ]);
+            $Resource =Resource::where('id',$id)->with('file')->get();
+            $updatedfile =File::where('id',$Resource[0]->file->id)->get();
+            if($request->path->getClientOriginalExtension() == 'pdf'){
+                if(file_exists(public_path('storage').'/'.$Resource[0]->file->path)){
+                    unlink(public_path('storage').'/'.$Resource[0]->file->path);
+                }
+                $fileName = time().'_'.$Resource[0]->id.'_'.$request->path->getClientOriginalName();
+                $filePath = $request->file('path')->storeAs('uploads', $fileName, 'public');
+                $updatedfile[0]->path=$filePath;
+                $updatedfile[0]->save();
+                return response()->json(['result'=>true,'message' => 'uploaded']);  
+
+            }else{
+                return response()->json(['typeerror'=>true,'message' => 'Please just upload pdf file']);  
+            }   
+            
+
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function update(Request $request, $id)
     {
         $this->validate($request,[
             'type' => 'required',
         ]);
+
         //update file resource
         if($request->type == 'file'){
             $this->validate($request,[
                 'title' => 'required',
             ]);
             $Resource =Resource::where('id',$id)->with('file')->get();
-            if($request->path){
-                if($request->path->getClientOriginalExtension() == 'pdf'){
-                    $fileName = time().'_'.$Resource[0]->id.'_'.$request->path->getClientOriginalName();
-                    $filePath = $request->file('path')->storeAs('uploads', $fileName, 'public');
-                    if(file_exists(public_path('storage').'/'.$Resource[0]->file->path)){
-                        unlink(public_path('storage').'/'.$Resource[0]->file->path);
-                    }
-                    $resource[0]->file->path=$filePath;
-                }else{
-                    return response()->json(['typeerror'=>true,'message' => 'Please just upload pdf file']);  
-                }   
-            }
             $Resource[0]->file->title=$request->title;
             $Resource[0]->file->save();
             return response()->json(['result'=>true,'file' => $Resource[0]], Response::HTTP_CREATED);
-        }else{
-            return response()->json(['result'=>false], Response::HTTP_CREATED);
-
         }
+
+        //update link resource
+        if($request->type == 'link'){
+            $this->validate($request,[
+                'newtabcheck' => 'required',
+                'link' => 'required',
+                'title' => 'required',
+            ]);
+            $Resource =Resource::where('id',$id)->with('link')->get();
+            $updatedlink =Link::where('id',$Resource[0]->link->id)->get();
+            $updatedlink[0]->newtabcheck = $request->newtabcheck;
+            $updatedlink[0]->title = $request->title;
+            $updatedlink[0]->link = $request->link;
+            $updatedlink[0]->save();
+            return response()->json(['result'=>true,'link' => $updatedlink[0]], Response::HTTP_CREATED);
+        }
+
+        //update link resource
+        if($request->type == 'snippet'){
+            $this->validate($request,[
+                'title' => 'required',
+                'description' => 'required',
+                'snippet' => 'required',
+            ]);
+
+            $Resource =Resource::where('id',$id)->with('snippet')->get();
+            $updatedSnippet =Snippet::where('id',$Resource[0]->snippet->id)->get();
+            $updatedSnippet[0]->snippet = $request->snippet;
+            $updatedSnippet[0]->title = $request->title;
+            $updatedSnippet[0]->description = $request->description;
+            $updatedSnippet[0]->save();
+            return response()->json(['result'=>true,'snippet' => $updatedSnippet[0]], Response::HTTP_CREATED);
+        }
+
+
     }
 
     /**
