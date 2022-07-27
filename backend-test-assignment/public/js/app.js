@@ -6027,6 +6027,7 @@ tinymce.init({
             snippettitle.value = "";
             snippetDescription.value = "";
             content.value = "";
+            tinymce.activeEditor.setContent('');
           } else {
             toastr.error("Sorry you have an error");
           }

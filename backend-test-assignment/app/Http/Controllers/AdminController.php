@@ -71,11 +71,11 @@ class AdminController extends Controller
                 'path' => 'required',
                 'title' => 'required',
             ]);
-            $newResource = new Resource();
-            $newResource->type = $request->type;
-            $newResource->save();
-    
+            
             if($request->path->getClientOriginalExtension() == 'pdf'){
+                $newResource = new Resource();
+                $newResource->type = $request->type;
+                $newResource->save();
                 $fileName = time().'_'.$newResource->id.'_'.$request->path->getClientOriginalName();
                 $filePath = $request->file('path')->storeAs('uploads', $fileName, 'public');
                 $newFile = new File();
