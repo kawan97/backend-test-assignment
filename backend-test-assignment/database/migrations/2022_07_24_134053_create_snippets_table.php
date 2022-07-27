@@ -14,12 +14,13 @@ class CreateSnippetsTable extends Migration
     public function up()
     {
         Schema::create('snippets', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->id();
             $table->string('title');
             $table->longText('description');
             $table->longText('snippet');
             $table->unsignedBigInteger('resource_id');
-            $table->foreign('resource_id')->references('id')->on('resources');
+            $table->foreign('resource_id')->references('id')->on('resources')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
