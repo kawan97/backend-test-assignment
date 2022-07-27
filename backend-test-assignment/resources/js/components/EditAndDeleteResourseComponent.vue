@@ -24,14 +24,49 @@
                     <td v-if="resource.link">{{resource.link.title}}</td>
                     <td v-if="resource.snippet">{{resource.snippet.title}}</td>
                     <td v-if="resource.file">{{resource.file.title}}</td>
-                    <td><button class="btn btn-warning" @click="editResource(resource.id)">Edit</button></td>
+                    <td><button class="btn btn-warning" @click="editHundlerResource(resource.id)">Edit</button></td>
                     <td><button class="btn btn-danger" @click="deleteResource(resource.id)">Delete</button></td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
+<!-- models -->
+<!-- model for file -->
+<div class="modal fade show" :style="{ 'display': filemodelshow ? 'block' : 'none' }" id="fileModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit File</h5>
+        <button type="button" class="btn-close" @click='closeModel'></button>
+      </div>
+      <div class="modal-body">
+
+        <form class="col-12" @submit.prevent="onSubmit">
+            <div class="mb-3">
+                <label for="resourcesTitle" class="form-label">Resources Title</label>
+                <input type="text" class="form-control"  name="resourcesTitle" id="resourcesTitle">
+            </div>
+            <div class="mb-3">
+                <label for="resourcesFile" class="form-label">Upload PDF File</label>
+                <input class="form-control" type="file" id="resourcesFile" name="resourcesFile" accept="application/pdf">
+                <div class="form-text">Please Upload PDF File.</div>
+            </div>
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" @click='closeModel'>Close</button>
+        <button type="button" class="btn btn-primary" @click='editResource'>Save changes</button>
+      </div>
     </div>
+  </div>
+</div>
+
+
+    </div>
+
+
 </template>
 
 <script>
@@ -39,7 +74,12 @@
         data() {
             return { 
                 resources:null,
+                resource:null,
                 loading:true,
+                filemodelshow:false,
+                linkmodelshow:false,
+                snippetmodelshow:false,
+
              }
         },
         beforeMount() {
@@ -69,9 +109,67 @@
                  this.getResource()
 
             },
-            editResource(id){
-                console.log(id)
+            editHundlerResource(id){
+                const found = this.resources.data.find(element => {
+                return element.id == id
+                });
+                this.resource=found
+                if(found.type=='file'){
+                    const resourcesTitle = document.getElementById("resourcesTitle");
+                    resourcesTitle.value=found.file.title
+                    this.filemodelshow=true
+                }else if(found.type=='snippet'){
+                    this.snippetmodelshow=true
+                }else{
+                    this.linkmodelshow=true
+                }
 
+
+            },
+            editResource(){
+                console.log(this.resource.id)
+                // update file
+                const resourcesFile = document.getElementById("resourcesFile")
+                const resourcesTitle = document.getElementById("resourcesTitle");
+                if(resourcesTitle.value == ''){
+                toastr.error('title is required')
+                }else{
+                    const formData = new FormData()
+                    formData.append("title", resourcesTitle.value)
+                    if(resourcesFile.files[0]){
+                        formData.append("path", resourcesFile.files[0]);
+                    }
+                    formData.append("type", 'file')
+                        axios({
+                        method: 'put',
+                        url: '/api/admin/resources/'+this.resource.id,
+                        data:formData,
+                        })
+                        .then(function (response) {
+                            if(response.data.typeerror){
+                             toastr.error(response.data.message)
+  
+                            }else if(response.data.result){
+                                console.log(response.data)
+                                toastr.success('successfully update one record')
+                                resourcesTitle.value=''
+                                resourcesFile.value=''
+                                this.closeModel()
+                            }else{
+                                console.log(response.data)
+                                toastr.error('Sorry you have an error')
+                            }
+                        });
+
+                }
+                // end update file
+
+
+            },
+            closeModel(){
+                this.filemodelshow=false
+                this.snippetmodelshow=false
+                this.linkmodelshow=false
             },
             getResource(){
             var self=this

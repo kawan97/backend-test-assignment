@@ -142,7 +142,34 @@ class AdminController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request,[
+            'type' => 'required',
+        ]);
+        //update file resource
+        if($request->type == 'file'){
+            $this->validate($request,[
+                'title' => 'required',
+            ]);
+            $Resource =Resource::where('id',$id)->with('file')->get();
+            if($request->path){
+                if($request->path->getClientOriginalExtension() == 'pdf'){
+                    $fileName = time().'_'.$Resource[0]->id.'_'.$request->path->getClientOriginalName();
+                    $filePath = $request->file('path')->storeAs('uploads', $fileName, 'public');
+                    if(file_exists(public_path('storage').'/'.$Resource[0]->file->path)){
+                        unlink(public_path('storage').'/'.$Resource[0]->file->path);
+                    }
+                    $resource[0]->file->path=$filePath;
+                }else{
+                    return response()->json(['typeerror'=>true,'message' => 'Please just upload pdf file']);  
+                }   
+            }
+            $Resource[0]->file->title=$request->title;
+            $Resource[0]->file->save();
+            return response()->json(['result'=>true,'file' => $Resource[0]], Response::HTTP_CREATED);
+        }else{
+            return response()->json(['result'=>false], Response::HTTP_CREATED);
+
+        }
     }
 
     /**
@@ -164,7 +191,6 @@ class AdminController extends Controller
             return response()->json(['result'=>true,'message' => 'successfully delete  resource '.$id]);
         }else{
             return response()->json(['result'=>true,'message' => 'you have an error']);
- 
         }
 
     }

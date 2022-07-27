@@ -21,5 +21,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/admin/create', [AdminController::class, 'store']);
 Route::get('/admin/resources', [AdminController::class, 'index']);
 Route::delete('/admin/resources/{id}', [AdminController::class, 'destroy']);
+Route::put('/admin/resources/{id}', [AdminController::class, 'update']);
 
 

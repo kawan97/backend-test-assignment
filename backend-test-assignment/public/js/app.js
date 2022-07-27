@@ -5302,11 +5302,50 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
       resources: null,
-      loading: true
+      resource: null,
+      loading: true,
+      filemodelshow: false,
+      linkmodelshow: false,
+      snippetmodelshow: false
     };
   },
   beforeMount: function beforeMount() {
@@ -5332,8 +5371,64 @@ __webpack_require__.r(__webpack_exports__);
       });
       this.getResource();
     },
-    editResource: function editResource(id) {
-      console.log(id);
+    editHundlerResource: function editHundlerResource(id) {
+      var found = this.resources.data.find(function (element) {
+        return element.id == id;
+      });
+      this.resource = found;
+
+      if (found.type == 'file') {
+        var resourcesTitle = document.getElementById("resourcesTitle");
+        resourcesTitle.value = found.file.title;
+        this.filemodelshow = true;
+      } else if (found.type == 'snippet') {
+        this.snippetmodelshow = true;
+      } else {
+        this.linkmodelshow = true;
+      }
+    },
+    editResource: function editResource() {
+      console.log(this.resource.id); // update file
+
+      var resourcesFile = document.getElementById("resourcesFile");
+      var resourcesTitle = document.getElementById("resourcesTitle");
+
+      if (resourcesTitle.value == '') {
+        toastr.error('title is required');
+      } else {
+        var formData = new FormData();
+        formData.append("title", resourcesTitle.value);
+
+        if (resourcesFile.files[0]) {
+          formData.append("path", resourcesFile.files[0]);
+        }
+
+        formData.append("type", 'file');
+        axios({
+          method: 'put',
+          url: '/api/admin/resources/' + this.resource.id,
+          data: formData
+        }).then(function (response) {
+          if (response.data.typeerror) {
+            toastr.error(response.data.message);
+          } else if (response.data.result) {
+            console.log(response.data);
+            toastr.success('successfully update one record');
+            resourcesTitle.value = '';
+            resourcesFile.value = '';
+            this.closeModel();
+          } else {
+            console.log(response.data);
+            toastr.error('Sorry you have an error');
+          }
+        });
+      } // end update file
+
+    },
+    closeModel: function closeModel() {
+      this.filemodelshow = false;
+      this.snippetmodelshow = false;
+      this.linkmodelshow = false;
     },
     getResource: function getResource() {
       var self = this;
@@ -28678,7 +28773,7 @@ var render = function () {
                           staticClass: "btn btn-warning",
                           on: {
                             click: function ($event) {
-                              return _vm.editResource(resource.id)
+                              return _vm.editHundlerResource(resource.id)
                             },
                           },
                         },
@@ -28706,11 +28801,124 @@ var render = function () {
               ),
             ]),
           ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "modal fade show",
+          style: { display: _vm.filemodelshow ? "block" : "none" },
+          attrs: { id: "fileModal", tabindex: "-1" },
+        },
+        [
+          _c("div", { staticClass: "modal-dialog" }, [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
+                _c(
+                  "h5",
+                  {
+                    staticClass: "modal-title",
+                    attrs: { id: "exampleModalLabel" },
+                  },
+                  [_vm._v("Edit File")]
+                ),
+                _vm._v(" "),
+                _c("button", {
+                  staticClass: "btn-close",
+                  attrs: { type: "button" },
+                  on: { click: _vm.closeModel },
+                }),
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c(
+                  "form",
+                  {
+                    staticClass: "col-12",
+                    on: {
+                      submit: function ($event) {
+                        $event.preventDefault()
+                        return _vm.onSubmit.apply(null, arguments)
+                      },
+                    },
+                  },
+                  [_vm._m(0), _vm._v(" "), _vm._m(1)]
+                ),
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-secondary",
+                    attrs: { type: "button" },
+                    on: { click: _vm.closeModel },
+                  },
+                  [_vm._v("Close")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary",
+                    attrs: { type: "button" },
+                    on: { click: _vm.editResource },
+                  },
+                  [_vm._v("Save changes")]
+                ),
+              ]),
+            ]),
+          ]),
+        ]
+      ),
     ],
     1
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "mb-3" }, [
+      _c(
+        "label",
+        { staticClass: "form-label", attrs: { for: "resourcesTitle" } },
+        [_vm._v("Resources Title")]
+      ),
+      _vm._v(" "),
+      _c("input", {
+        staticClass: "form-control",
+        attrs: { type: "text", name: "resourcesTitle", id: "resourcesTitle" },
+      }),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "mb-3" }, [
+      _c(
+        "label",
+        { staticClass: "form-label", attrs: { for: "resourcesFile" } },
+        [_vm._v("Upload PDF File")]
+      ),
+      _vm._v(" "),
+      _c("input", {
+        staticClass: "form-control",
+        attrs: {
+          type: "file",
+          id: "resourcesFile",
+          name: "resourcesFile",
+          accept: "application/pdf",
+        },
+      }),
+      _vm._v(" "),
+      _c("div", { staticClass: "form-text" }, [
+        _vm._v("Please Upload PDF File."),
+      ]),
+    ])
+  },
+]
 render._withStripped = true
 
 
